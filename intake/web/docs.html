@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Intake API</title>
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    .wrap { max-width: 900px; margin: 0 auto; padding: 28px 20px 80px; }
+    .ep { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); margin-bottom: 12px; overflow: hidden; }
+    .ep summary { display: flex; gap: 10px; align-items: center; padding: 12px 14px; cursor: pointer; list-style: none; }
+    .ep summary::-webkit-details-marker { display: none; }
+    .verb { font: 600 12px var(--mono); padding: 3px 8px; border-radius: 6px; min-width: 52px; text-align: center; }
+    .GET { background: var(--mid-bg); color: var(--mid); } .POST { background: var(--good-bg); color: var(--good); } .PATCH { background: var(--warn-bg); color: var(--warn); }
+    .path { font: 13px var(--mono); }
+    .ep .inner { padding: 0 14px 14px; border-top: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+    td, th { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--text-3); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    code { font-family: var(--mono); font-size: 12.5px; }
+    .try { margin-top: 10px; }
+    pre.out { max-height: 320px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <header class="top"><div class="brand"><div class="brand-mark">⌘</div><span>Job Intake API</span></div>
+    <div class="top-right"><a class="btn" href="/">← Back to app</a><a class="btn" href="/api/openapi.json">openapi.json</a></div></header>
+  <div class="wrap">
+    <p>Local REST API for searching, ranking and tracking jobs. Every job carries a <code>match</code> score (0–100) against your
+      profile plus human-readable <code>reasons</code>. Write requests need <code>Content-Type: application/json</code>.
+      If the server was started with <code>--token</code>, send <code>Authorization: Bearer &lt;token&gt;</code>.</p>
+    <p>For Claude, the MCP server is easier: <code>claude mcp add jobintake -- python3 ~/jobintake/jobintake.py mcp</code></p>
+    <div id="eps"><div class="skeleton"></div></div>
+  </div>
+<script>
+"use strict";
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+fetch("/api/openapi.json").then((r) => r.json()).then((spec) => {
+  const out = [];
+  for (const [path, ops] of Object.entries(spec.paths)) {
+    for (const [verb, op] of Object.entries(ops)) {
+      const V = verb.toUpperCase();
+      const params = (op.parameters || []).map((p) => `<tr><td><code>${esc(p.name)}</code></td><td>${esc(p.in)}</td><td>${esc(p.description || "")}</td></tr>`).join("");
+      const body = op.requestBody?.content?.["application/json"]?.schema?.properties;
+      const bodyRows = body ? Object.entries(body).map(([k, v]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(v.type || "")}${v.enum ? " (" + esc(v.enum.filter(Boolean).join(" | ")) + ")" : ""}</td><td></td></tr>`).join("") : "";
+      const example = V === "GET" && !path.includes("{")
+        ? `curl '${location.origin}${path}${path === "/api/jobs" ? "?q=python&workplace=Remote&limit=3" : ""}'`
+        : V === "GET" ? `curl '${location.origin}${path}'`
+        : `curl -X ${V} '${location.origin}${path}' -H 'Content-Type: application/json' -d '${path.endsWith("/track") ? '{"status":"saved"}' : "{}"}'`;
+      out.push(`<details class="ep"><summary><span class="verb ${V}">${V}</span><span class="path">${esc(path)}</span><span class="muted">${esc(op.summary)}</span></summary>
+        <div class="inner">
+          ${params ? `<table><tr><th>Parameter</th><th>In</th><th>Description</th></tr>${params}</table>` : ""}
+          ${bodyRows ? `<table><tr><th>Body field</th><th>Type</th><th></th></tr>${bodyRows}</table>` : ""}
+          <div class="code" style="margin-top:12px">${esc(example)}</div>
+          ${V === "GET" && !path.includes("{") && !path.endsWith(".csv") ? `<button class="btn sm try" data-path="${esc(path)}">Try it</button><pre class="code out" hidden></pre>` : ""}
+        </div></details>`);
+    }
+  }
+  document.getElementById("eps").innerHTML = out.join("");
+  document.querySelectorAll(".try").forEach((b) => (b.onclick = async () => {
+    const pre = b.nextElementSibling;
+    const q = b.dataset.path === "/api/jobs" ? "?limit=3" : "";
+    const data = await fetch(b.dataset.path + q).then((r) => r.json());
+    pre.hidden = false;
+    pre.textContent = JSON.stringify(data, null, 2).slice(0, 6000);
+  }));
+});
+</script>
+</body>
+</html>

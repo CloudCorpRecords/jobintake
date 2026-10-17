@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+*.db-shm
+*.db-wal
+
+# Generated data (rebuild with: python3 jobintake.py run)
+*.db
+jobs*.csv

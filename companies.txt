@@ -1,0 +1,34 @@
+# Company career boards to pull directly.
+# Format:  kind:token | Display Name | Industry        (name and industry are optional)
+# Find the token in a company's careers URL:
+#   boards.greenhouse.io/<token>   jobs.lever.co/<token>   jobs.ashbyhq.com/<token>
+greenhouse:stripe      | Stripe     | Fintech / Financial Services
+greenhouse:airbnb      | Airbnb     | Travel / Hospitality
+greenhouse:discord     | Discord    | Media / Entertainment / Gaming
+greenhouse:figma       | Figma      | SaaS / B2B Software
+greenhouse:coinbase    | Coinbase   | Crypto / Web3
+greenhouse:databricks  | Databricks | Developer Tools / Infrastructure
+greenhouse:robinhood   | Robinhood  | Fintech / Financial Services
+greenhouse:reddit      | Reddit     | Media / Entertainment / Gaming
+greenhouse:dropbox     | Dropbox    | SaaS / B2B Software
+greenhouse:gitlab      | GitLab     | Developer Tools / Infrastructure
+greenhouse:cloudflare  | Cloudflare | Cybersecurity
+greenhouse:anthropic   | Anthropic  | AI / Machine Learning
+greenhouse:instacart   | Instacart  | E-commerce / Retail
+greenhouse:pinterest   | Pinterest  | Media / Entertainment / Gaming
+greenhouse:duolingo    | Duolingo   | Education / EdTech
+lever:spotify          | Spotify    | Media / Entertainment / Gaming
+lever:palantir         | Palantir   | SaaS / B2B Software
+lever:zoox             | Zoox       | Logistics / Transportation / Mobility
+ashby:ramp             | Ramp       | Fintech / Financial Services
+ashby:notion           | Notion     | SaaS / B2B Software
+ashby:openai           | OpenAI     | AI / Machine Learning
+ashby:linear           | Linear     | SaaS / B2B Software
+ashby:supabase         | Supabase   | Developer Tools / Infrastructure
+ashby:cursor           | Cursor     | Developer Tools / Infrastructure
+
+# added by discover 2026-10-08
+workable:huggingface  | Hugging Face | AI / Machine Learning
+smartrecruiters:canva | Canva     | SaaS / B2B Software
+greenhouse:scaleai    | Scale AI   | AI / Machine Learning
+greenhouse:vercel     | Vercel     | Developer Tools / Infrastructure
